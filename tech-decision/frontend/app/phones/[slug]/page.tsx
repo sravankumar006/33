@@ -92,6 +92,31 @@ export async function generateMetadata({ params }: PhonePageProps): Promise<Meta
 export default async function PhoneDetailPage({ params }: PhonePageProps) {
   const { slug } = await params;
   const phone = await getPhoneDetails(slug);
+
+  if (!phone) {
+    console.log("PHONE FETCH FAILED", slug);
+    return (
+      <main className="min-h-screen bg-slate-950 px-6 py-20 text-slate-100 flex items-center justify-center">
+        <div className="max-w-md w-full rounded-[2rem] border border-rose-500/20 bg-rose-950/40 p-8 text-center backdrop-blur-xl shadow-glass">
+          <p className="text-xs uppercase tracking-[0.2em] text-rose-400 font-bold">Debug Mode</p>
+          <h1 className="mt-4 text-2xl font-semibold text-white">Phone Fetch Failed</h1>
+          <p className="mt-2 text-sm text-slate-400">Could not retrieve details for:</p>
+          <div className="mt-2 inline-block rounded-xl bg-black/40 px-3 py-1.5 font-mono text-xs text-rose-300 border border-white/5">
+            {slug}
+          </div>
+          <div className="mt-6 text-left text-xs text-slate-400 space-y-2 border-t border-white/5 pt-4">
+            <p className="font-semibold text-slate-300">Possible Causes:</p>
+            <ul className="list-disc pl-4 space-y-1">
+              <li>Empty database in production</li>
+              <li>Missing or incorrect <code className="text-cyan-300 font-mono">NEXT_PUBLIC_API_URL</code> environment variable</li>
+              <li>Backend service is down or inaccessible from server component</li>
+            </ul>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const prices = await getPhonePrices(slug);
 
   let jsonLd: Record<string, any> | null = null;
